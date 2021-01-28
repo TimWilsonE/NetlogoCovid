@@ -4,7 +4,7 @@
 
 
 
-extensions [ rngs profiler ]
+extensions [ rngs profiler csv ]
 
 globals [
 	anxietyFactor
@@ -115,6 +115,11 @@ globals [
 	BetaCompliance
 	SComp
 
+  ;; file reading and draw handling
+  drawNumber
+  drawRandomSeed
+  drawList
+
 ]
 
 breed [ simuls simul ]
@@ -209,9 +214,21 @@ resources-own [
 	volume;; resources avaialable in resource pile
 ]
 
+to setupRandomSeed
+	set drawList csv:from-file "draws.csv"
+	;; The draw for this run is the top entry of the file and apply the random seed.
+	set drawNumber first first drawList
+	set drawRandomSeed last first drawList
+	random-seed drawRandomSeed
+
+	;; Move the first draw to the bottom of the file, then write the file.
+	set drawList lput first drawList drawList
+	set drawList remove-item 0 drawList
+	csv:to-file "draws.csv" drawList
+end
 
 to setup
-	;;random-seed 50
+	setupRandomSeed
 
 	profiler:start
 
@@ -2559,7 +2576,7 @@ SWITCH
 168
 spatial_distance
 spatial_distance
-0
+1
 1
 -1000
 
@@ -2636,7 +2653,7 @@ SWITCH
 205
 case_isolation
 case_isolation
-0
+1
 1
 -1000
 
@@ -2716,7 +2733,7 @@ SWITCH
 349
 quarantine
 quarantine
-0
+1
 1
 -1000
 
@@ -2810,7 +2827,7 @@ Track_and_Trace_Efficiency
 Track_and_Trace_Efficiency
 0
 1
-0.33109144622242775
+0.25
 .05
 1
 NIL
@@ -2939,7 +2956,7 @@ Proportion_People_Avoid
 Proportion_People_Avoid
 0
 100
-84.0
+80.0
 .5
 1
 NIL
@@ -2954,7 +2971,7 @@ Proportion_Time_Avoid
 Proportion_Time_Avoid
 0
 100
-84.0
+80.0
 .5
 1
 NIL
@@ -3522,7 +3539,7 @@ INPUTBOX
 609
 284
 ppa
-83.0
+80.0
 1
 0
 Number
@@ -3533,7 +3550,7 @@ INPUTBOX
 700
 285
 pta
-83.0
+80.0
 1
 0
 Number
